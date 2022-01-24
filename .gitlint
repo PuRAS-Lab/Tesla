@@ -48,7 +48,7 @@ line-length=100
 # Examples for valid titles:
 # BCP-12345/MeHa: oekhjasdflkjasdflkjasdf
 # ---/HaMe: asdljkhadfoekjhasdf
-regex=^(?:(?:.+-(\d|\.|\-|\/)*)|(?:---))\/[A-Za-z]{2,4}: .{10,}
+regex=^(?:(?:.+-(\d|\.|\/)*)|(?:---))\/[A-Za-z]{2,4}: .{10,}
 
 # [body-max-line-length]
 # line-length=80
