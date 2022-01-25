@@ -44,7 +44,8 @@ from cv_bridge import CvBridge, CvBridgeError
 
 # Parameters
 camera_info_topic = '/carla/ego_vehicle/camera/rgb/front/camera_info'
-image_topic       = '/carla/ego_vehicle/camera/rgb/front/image_color'
+# Set in launch file:
+# image_topic       = '/carla/ego_vehicle/camera/rgb/front/image_color'
 
 # Global Variables
 img_frame  = None
@@ -87,11 +88,15 @@ def carla_listener():
     # Initialize the CvBridge class!
     global bridge
     bridge = CvBridge()
+    
+    # Get camera topic name from launch file
+    if rospy.has_param('~camera_topic_name'):
+    	image_topic = rospy.get_param('~camera_topic_name')
+    	rospy.Subscriber(image_topic, Image, img_processing_callback)
 
     # Initalize a subscriber!
-    rospy.Subscriber(camera_info_topic, CameraInfo, camera_info_callback)
-    rospy.Subscriber(image_topic, Image, img_processing_callback)
-  
+    # rospy.Subscriber(camera_info_topic, CameraInfo, camera_info_callback)
+    
     # Keep the program alive!
     rospy.spin()
 

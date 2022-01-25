@@ -1,5 +1,8 @@
 <launch>
- 
-  <node pkg="carla_lane_detection" name="carla_listener" type="carla_listener.py"></node>
+
+   
+  <node pkg="carla_lane_detection" name="carla_listener" type="carla_listener.py">
+  	<param name="camera_topic_name" value="/carla/ego_vehicle/camera/rgb/front/image_color"/>
+  </node>
  
 </launch>
