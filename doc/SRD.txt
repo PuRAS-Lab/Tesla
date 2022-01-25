@@ -1,0 +1,25 @@
+This document describes the software requirements of the Lane Detection feature.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| ID            | Description	                                                                                                                                | Type           |
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| LD-1.0	| Project shall be written as a ROS package	                                                                                                | Non-functional |
+| LD-1.1	| Node shall be able to start the node via launch file	                                                                                        | Non-functional |
+| LD-1.2	| Project may have unit tests	                                                                                                                | Non-functional |
+| LD-1.3	| Project shall be written in Python	                                                                                                        | Non-functional |
+| LD-2.0	| Node shall be able to receive raw camera frames from CARLA Simulator	                                                                        | Functional     |
+| LD-2.1	| Node should provide customer with the ability to set a name of the camera topic via launch file (ROS parameters)	                        | Non-functional |
+| LD-3.1	| Node shall convert the image to grayscale	                                                                                                | Functional     |
+| LD-3.2	| Node shall blur the image to remove white noise from the image	                                                                        | Functional     |
+| LD-4.1	| Node shall extract edges using Canny algorithm	                                                                                        | Functional     |
+| LD-4.2	| Node should provide customer with the ability to set Canny parameters via launch file	                                                        | Non-functional |
+| LD-5.1	| Node shall define and mask Region of Interest (ROI) in the image	                                                                        | Functional     |
+| LD-5.2	| Node should provide customer with the ability to set ROI points as parameters via launch file	                                                | Non-functional |
+| LD-6.1	| Node shall connect edge pixels into into lines by using Hough transform	                                                                | Functional     |
+| LD-6.2	| Node should provide customer with the ability to set Hough transform parameters via launch file	                                        | Non-functional |
+| LD-7.1	| Node shall extrapolate two lanes from obtained Hough lines	                                                                                | Functional     |
+| LD-8.1	| Node shall draw two lines on the original image	                                                                                        | Functional     |
+| LD-9.1	| Node shall publish image with drawn lanes to ROS topic	                                                                                | Functional     |
+| LD-9.2	| Node should provide customer with the ability to set name of topic for publishing image with lanes via launch file. Default: /lane_detection	| Non-functional |
+| LD-10	        | Project shall have proper C4 diagram written in PlantUML	                                                                                | Functional     |
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
