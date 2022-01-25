@@ -1,0 +1,26 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Component.puml
+LAYOUT_WITH_LEGEND()
+title Component Diagram for ROS2 based Autoware Auto Application
+Container(usercode, "CARLA simulator")
+Container_Boundary(app, "ROS2 Components") {
+Component(usercode1, "Receive frame")
+Component(veza2, "Convert to grauscale")
+Component(veza3, "Remove noise")
+Component(veza4, "Extract edges")
+Component(veza5, "Define edges")
+Component(veza6, "Detected lines")
+Component(veza7, "Drow two lines on pictures")
+Component(veza8, "Publish original picture with two linesmoz", "Finished picture in CARLA simulator")
+Rel(usercode, usercode1, "Uses","Api")
+Rel(usercode1, veza2, "Uses","Api")
+Rel(veza2, veza3, "Uses","Api")
+Rel(veza3, veza4, "Uses","Api")
+Rel(veza4, veza5, "Uses","Api")
+Rel(veza5, veza6, "Uses","Api")
+Rel(veza6, veza7, "Uses","Api")
+Rel(veza7, veza8, "Uses","Api")
+}
+@enduml
