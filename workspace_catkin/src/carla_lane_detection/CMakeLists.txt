@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.0.2)
 project(carla_lane_detection)
 
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
   rospy
   std_msgs
   sensor_msgs
   message_generation
+  cv_bridge
 )
 
 generate_messages(
@@ -15,11 +15,16 @@ generate_messages(
 )
 
 catkin_package(
-  CATKIN_DEPENDS roscpp rospy std_msgs sensor_msgs
+  CATKIN_DEPENDS rospy std_msgs sensor_msgs cv_bridge
 )
 
 include_directories(
 include
   ${catkin_INCLUDE_DIRS}
+)
+
+### Publisher/Subscriber python!
+catkin_install_python(PROGRAMS scripts/carla_listener.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
