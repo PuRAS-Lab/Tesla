@@ -65,9 +65,10 @@ def img_processing_callback(data):
     except CvBridgeError as e:
         rospy.logerr("CvBridge Error: {0}".format(e))
     
-    # Example of image processing!    
-    #new_image = cv2.rotate(cv_image, cv2.ROTATE_90_CLOCKWISE)
-    cv2.imshow("Image window", cv_image)
+    # Convert input RGB image to grayscale
+    gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+
+    cv2.imshow("Image window", gray)
     cv2.waitKey(3)
     
 # Camera basic information callback:    
@@ -94,8 +95,8 @@ def carla_listener():
     	image_topic = rospy.get_param('~camera_topic_name')
     	rospy.Subscriber(image_topic, Image, img_processing_callback)
 
-    # Initalize a subscriber!
-    # rospy.Subscriber(camera_info_topic, CameraInfo, camera_info_callback)
+    # Initalize a subscriber for getting camera basic information!
+    rospy.Subscriber(camera_info_topic, CameraInfo, camera_info_callback)
     
     # Keep the program alive!
     rospy.spin()
