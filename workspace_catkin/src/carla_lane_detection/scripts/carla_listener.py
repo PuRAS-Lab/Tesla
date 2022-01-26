@@ -47,6 +47,9 @@ camera_info_topic = '/carla/ego_vehicle/camera/rgb/front/camera_info'
 # Set in launch file:
 # image_topic       = '/carla/ego_vehicle/camera/rgb/front/image_color'
 
+canny_threshold_1 = 100
+canny_threshold_2 = 200
+
 # Global Variables
 img_frame  = None
 header     = None
@@ -70,8 +73,11 @@ def img_processing_callback(data):
     
     # Remove white noise from image with low pass filter (Gaussian filter)
     blur = cv2.GaussianBlur(gray, (7, 7), 0)
+    
+    # Canny edge detector
+    edges = cv2.Canny(blur, canny_threshold_1, canny_threshold_2, apertureSize = 3)
 
-    cv2.imshow("Image window blur", blur)
+    cv2.imshow("Image window blur", edges)
     cv2.waitKey(3)
     
 # Camera basic information callback:    
