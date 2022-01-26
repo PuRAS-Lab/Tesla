@@ -71,7 +71,6 @@ def img_processing_callback(data):
     # Remove white noise from image with low pass filter (Gaussian filter)
     blur = cv2.GaussianBlur(gray, (7, 7), 0)
 
-    cv2.imshow("Image window gray", gray)
     cv2.imshow("Image window blur", blur)
     cv2.waitKey(3)
     
