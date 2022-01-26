@@ -55,8 +55,25 @@ img_width  = None
 bridge     = None
 
 # Image processing callback
+
+def region_of_interest(img, vertices):
+    mask = np.zeros_like(img)
+    match_mask_color = 255 # <-- This line altered for grayscale.
+    cv2.fillPoly(mask, vertices, match_mask_color)
+    masked_image = cv2.bitwise_and(img, mask)
+    return masked_image
         
 def img_processing_callback(data):
+
+    roi_x_min = 100
+    roi_x_max = 400
+    roi_y_max = 300
+    
+    roi_vertices = [
+    (roi_x_min, img_height),
+    (img_width / 2, roi_y_max),
+    (roi_x_max, img_height)
+    ]
     
     # Try to convert the ROS Image message to a CV2 Image
     try:
@@ -67,7 +84,9 @@ def img_processing_callback(data):
     
     # Example of image processing!    
     #new_image = cv2.rotate(cv_image, cv2.ROTATE_90_CLOCKWISE)
-    cv2.imshow("Image window", cv_image)
+    
+    roi = region_of_interest(cv_image,roi_vertices)
+    cv2.imshow("Image window", roi)
     cv2.waitKey(3)
     
 # Camera basic information callback:    
