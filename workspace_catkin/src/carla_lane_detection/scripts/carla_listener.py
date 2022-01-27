@@ -47,8 +47,8 @@ camera_info_topic = '/carla/ego_vehicle/camera/rgb/front/camera_info'
 # Set in launch file:
 # image_topic       = '/carla/ego_vehicle/camera/rgb/front/image_color'
 
-canny_threshold_1 = 100
-canny_threshold_2 = 200
+# canny_threshold_1 = 100
+# canny_threshold_2 = 200
 
 # Global Variables
 img_frame  = None
@@ -57,8 +57,14 @@ img_height = None
 img_width  = None
 bridge     = None
 
-# Image processing callback
-        
+
+# Check if Canny parameters are valid
+def check_canny_params(canny_param1, canny_param2):
+    if (canny_param1 > 0 and canny_param2 > 0) and (canny_param1 < canny_param2):
+    	return True
+    return False
+
+# Image processing callback      
 def img_processing_callback(data):
     
     # Try to convert the ROS Image message to a CV2 Image
@@ -75,9 +81,17 @@ def img_processing_callback(data):
     blur = cv2.GaussianBlur(gray, (7, 7), 0)
     
     # Canny edge detector
-    edges = cv2.Canny(blur, canny_threshold_1, canny_threshold_2, apertureSize = 3)
-
-    cv2.imshow("Image window blur", edges)
+    edges = None
+    if rospy.has_param('~canny_th_1') and rospy.has_param('~canny_th_2'):
+    	canny_threshold_1 = int(rospy.get_param('~canny_th_1'))
+    	canny_threshold_2 = int(rospy.get_param('~canny_th_2'))
+    	if check_canny_params(canny_threshold_1, canny_threshold_2):
+    		edges = cv2.Canny(blur, canny_threshold_1, canny_threshold_2, apertureSize = 3)
+    
+    if edges is not None:	
+    	cv2.imshow("Image window blur", edges)
+    else:
+    	cv2.imshow("Image window blur", blur)
     cv2.waitKey(3)
     
 # Camera basic information callback:    
