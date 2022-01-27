@@ -149,9 +149,9 @@ def img_processing_callback(data):
     #Define Region of Interest
     roi = calculate_roi(edges)
     
-    lines = hough_transformation(roi, hough_rho, hough_theta, hough_trshld, hough_min_line_len, hough_max_line_gap)
+    line_image = hough_transformation(roi, cv_image, hough_rho, hough_theta, hough_trshld, hough_min_line_len, hough_max_line_gap)
     
-    cv2.imshow("Image window blur, edge, roi", roi)
+    cv2.imshow("Image window blur, edge, roi", line_image)
 
     cv2.waitKey(3)
     
