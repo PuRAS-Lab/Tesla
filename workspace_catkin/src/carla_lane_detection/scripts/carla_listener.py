@@ -42,6 +42,7 @@ import numpy as np
 from std_msgs.msg import String
 from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge, CvBridgeError
+from hough_transformation import hough_transformation
 
 # Parameters
 camera_info_topic = '/carla/ego_vehicle/camera/rgb/front/camera_info'
@@ -52,11 +53,16 @@ camera_info_topic = '/carla/ego_vehicle/camera/rgb/front/camera_info'
 # canny_threshold_2 = 200
 
 # Global Variables
-img_frame  = None
-header     = None
-img_height = 0
-img_width  = 0
-bridge     = None
+img_frame          = None
+header             = None
+img_height         = 0
+img_width          = 0
+bridge             = None
+hough_rho          = 1
+hough_theta        = np.pi/180
+hough_trshld       = 80
+hough_min_line_len = 50
+hough_max_line_gap = 100
 
 
 def region_of_interest(img, vertices):
@@ -142,6 +148,8 @@ def img_processing_callback(data):
     
     #Define Region of Interest
     roi = calculate_roi(edges)
+    
+    lines = hough_transformation(roi, hough_rho, hough_theta, hough_trshld, hough_min_line_len, hough_max_line_gap)
     
     cv2.imshow("Image window blur, edge, roi", roi)
 
