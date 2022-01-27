@@ -38,6 +38,7 @@
 
 import cv2
 import rospy
+import numpy as np
 from std_msgs.msg import String
 from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge, CvBridgeError
@@ -53,10 +54,18 @@ camera_info_topic = '/carla/ego_vehicle/camera/rgb/front/camera_info'
 # Global Variables
 img_frame  = None
 header     = None
-img_height = None
-img_width  = None
+img_height = 0
+img_width  = 0
 bridge     = None
 
+
+def region_of_interest(img, vertices):
+    mask = np.zeros_like(img)
+    match_mask_color = 255 # <-- This line altered for grayscale.
+    cv2.fillPoly(mask, vertices, match_mask_color)
+    masked_image = cv2.bitwise_and(img, mask)
+    return masked_image
+    
 
 # Check if Canny parameters are valid
 def check_canny_params(canny_param1, canny_param2):
@@ -82,6 +91,17 @@ def canny_edge_detector(blur):
 
 # Image processing callback      
 def img_processing_callback(data):
+
+    # Need add ROS parameters
+    roi_x_min = 100
+    roi_x_max = 400
+    roi_y_max = 300
+    
+    roi_vertices = [
+    (roi_x_min, img_height),
+    (img_width / 2, roi_y_max),
+    (roi_x_max, img_height)
+    ]
     
     # Try to convert the ROS Image message to a CV2 Image
     try:
@@ -99,7 +119,11 @@ def img_processing_callback(data):
     # Canny edge detector
     edges = canny_edge_detector(blur)
     
-    cv2.imshow("Image window blur", edges)
+    #Define Region of Interest
+    roi = region_of_interest(edges, np.array([roi_vertices], np.int32))
+    
+    cv2.imshow("Image window blur, edge, roi", roi)
+
     cv2.waitKey(3)
     
 # Camera basic information callback:    
