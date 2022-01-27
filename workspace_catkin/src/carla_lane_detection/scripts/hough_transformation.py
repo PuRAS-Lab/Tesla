@@ -3,6 +3,17 @@ import numpy as np
 import math
 
 
+def draw_lines(img, lines):
+    # Nacrtati dvije linije na slici
+    for i in range(2):
+        x1 = lines[i][0][0]
+        y1 = lines[i][0][1]    
+        x2 = lines[i][0][2]
+        y2 = lines[i][0][3]
+        cv2.line(img,(x1,y1),(x2,y2),(255,0,0),4)
+
+    return img
+
 def extrapolate_two_lines(lines):
     lines_info = []
     two_lines = []
@@ -40,7 +51,8 @@ def extrapolate_two_lines(lines):
     return two_lines
     
 
-def hough_transformation(image, hough_rho, hough_theta, hough_trshld, hough_min_line_len, hough_max_line_gap):
+def hough_transformation(image, original_image, hough_rho, hough_theta, hough_trshld, hough_min_line_len, hough_max_line_gap):
+    # Izvrsiti Houghovu transformaciju nad ulaznom slikom
     lines = cv2.HoughLinesP(
         image,
         rho = hough_rho,
@@ -51,6 +63,14 @@ def hough_transformation(image, hough_rho, hough_theta, hough_trshld, hough_min_
         maxLineGap = hough_max_line_gap
     )
     
+    # Izdvojiti dvije linije
     lines = extrapolate_two_lines(lines)
+    
+    if lines is not None:
+        # Ako postoje linije onda ih nacrtati na originalnoj slici
+        line_image = draw_lines(original_image, lines)
+    else:
+        # Ako ne postoje linije onda vratiti originalnu sliku bez izmjena
+        line_image = original_image
 
-    return lines
+    return line_image
