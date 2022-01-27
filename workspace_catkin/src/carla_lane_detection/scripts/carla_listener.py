@@ -60,9 +60,25 @@ bridge     = None
 
 # Check if Canny parameters are valid
 def check_canny_params(canny_param1, canny_param2):
-    if (canny_param1 > 0 and canny_param2 > 0) and (canny_param1 < canny_param2):
+    if (canny_param1 > 0 and canny_param2 > 0) and (canny_param1 < canny_param2)  and (canny_param1 < 255 and canny_param2 < 255):
     	return True
     return False
+ 
+# Perform Canny edge detector on image  
+def canny_edge_detector(blur):
+    # Defaul values
+    canny_threshold_1 = 100
+    canny_threshold_2 = 200
+    
+    if rospy.has_param('~canny_th_1') and rospy.has_param('~canny_th_2'):
+    	canny_threshold_1 = int(rospy.get_param('~canny_th_1'))
+    	canny_threshold_2 = int(rospy.get_param('~canny_th_2'))
+    	if not check_canny_params(canny_threshold_1, canny_threshold_2):
+    		canny_threshold_1 = 100	
+    		canny_threshold_2 = 200
+    
+    edges = cv2.Canny(blur, canny_threshold_1, canny_threshold_2, apertureSize = 3)
+    return edges
 
 # Image processing callback      
 def img_processing_callback(data):
@@ -81,17 +97,9 @@ def img_processing_callback(data):
     blur = cv2.GaussianBlur(gray, (7, 7), 0)
     
     # Canny edge detector
-    edges = None
-    if rospy.has_param('~canny_th_1') and rospy.has_param('~canny_th_2'):
-    	canny_threshold_1 = int(rospy.get_param('~canny_th_1'))
-    	canny_threshold_2 = int(rospy.get_param('~canny_th_2'))
-    	if check_canny_params(canny_threshold_1, canny_threshold_2):
-    		edges = cv2.Canny(blur, canny_threshold_1, canny_threshold_2, apertureSize = 3)
+    edges = canny_edge_detector(blur)
     
-    if edges is not None:	
-    	cv2.imshow("Image window blur", edges)
-    else:
-    	cv2.imshow("Image window blur", blur)
+    cv2.imshow("Image window blur", edges)
     cv2.waitKey(3)
     
 # Camera basic information callback:    
