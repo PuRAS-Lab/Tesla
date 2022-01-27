@@ -89,19 +89,40 @@ def canny_edge_detector(blur):
     edges = cv2.Canny(blur, canny_threshold_1, canny_threshold_2, apertureSize = 3)
     return edges
 
+# Check if roi params are valid
+def check_roi_params(x_min, x_max, y_max):
+    if (x_min <= 0 or x_min >= img_width/2) and (x_max <= img_width/2 or x_max >= img_width) and (y_max <= 0 or y_max >= img_height):
+    	return True
+    return False
+
+# Region of interest
+def calculate_roi(edges):
+    # Defaul values
+    roi_x_min = 0
+    roi_x_max = 800
+    roi_y_max = 200
+    
+    if rospy.has_param('~roi_x_min') and rospy.has_param('~roi_x_max') and rospy.has_param('~roi_y_max'):
+    	roi_x_min = int(rospy.get_param('~roi_x_min'))
+    	roi_x_max = int(rospy.get_param('~roi_x_max'))
+    	roi_y_max = int(rospy.get_param('~roi_y_max'))
+    	if not check_roi_params(roi_x_min, roi_x_max, roi_y_max):
+    		roi_x_min = 0
+    		roi_x_max = 800
+    		roi_y_max = 200
+    		
+    roi_vertices = [
+    	(roi_x_min, img_height),
+    	(img_width / 2, roi_y_max),
+    	(roi_x_max, img_height)
+    ]
+    		
+    roi = region_of_interest(edges, np.array([roi_vertices], np.int32))
+    return roi
+    
+
 # Image processing callback      
 def img_processing_callback(data):
-
-    # Need add ROS parameters
-    roi_x_min = 100
-    roi_x_max = 400
-    roi_y_max = 300
-    
-    roi_vertices = [
-    (roi_x_min, img_height),
-    (img_width / 2, roi_y_max),
-    (roi_x_max, img_height)
-    ]
     
     # Try to convert the ROS Image message to a CV2 Image
     try:
@@ -120,7 +141,7 @@ def img_processing_callback(data):
     edges = canny_edge_detector(blur)
     
     #Define Region of Interest
-    roi = region_of_interest(edges, np.array([roi_vertices], np.int32))
+    roi = calculate_roi(edges)
     
     cv2.imshow("Image window blur, edge, roi", roi)
 
