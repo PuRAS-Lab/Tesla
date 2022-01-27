@@ -47,6 +47,9 @@ camera_info_topic = '/carla/ego_vehicle/camera/rgb/front/camera_info'
 # Set in launch file:
 # image_topic       = '/carla/ego_vehicle/camera/rgb/front/image_color'
 
+canny_threshold_1 = 100
+canny_threshold_2 = 200
+
 # Global Variables
 img_frame  = None
 header     = None
@@ -65,6 +68,7 @@ def region_of_interest(img, vertices):
         
 def img_processing_callback(data):
 
+    # Need add ROS parameters
     roi_x_min = 100
     roi_x_max = 400
     roi_y_max = 300
@@ -82,11 +86,20 @@ def img_processing_callback(data):
     except CvBridgeError as e:
         rospy.logerr("CvBridge Error: {0}".format(e))
     
-    # Example of image processing!    
-    #new_image = cv2.rotate(cv_image, cv2.ROTATE_90_CLOCKWISE)
+    # Convert input RGB image to grayscale
+    gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
     
+    # Remove white noise from image with low pass filter (Gaussian filter)
+    blur = cv2.GaussianBlur(gray, (7, 7), 0)
+    
+    # Canny edge detector
+    edges = cv2.Canny(blur, canny_threshold_1, canny_threshold_2, apertureSize = 3)
+    
+    #Define Region of Interst
     roi = region_of_interest(cv_image, np.array([roi_vertices], np.int32))
-    cv2.imshow("Image window", roi)
+
+    cv2.imshow("Image window blur", roi)
+
     cv2.waitKey(3)
     
 # Camera basic information callback:    
@@ -113,8 +126,8 @@ def carla_listener():
     	image_topic = rospy.get_param('~camera_topic_name')
     	rospy.Subscriber(image_topic, Image, img_processing_callback)
 
-    # Initalize a subscriber!
-    # rospy.Subscriber(camera_info_topic, CameraInfo, camera_info_callback)
+    # Initalize a subscriber for getting camera basic information!
+    rospy.Subscriber(camera_info_topic, CameraInfo, camera_info_callback)
     
     # Keep the program alive!
     rospy.spin()
