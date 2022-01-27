@@ -96,9 +96,9 @@ def img_processing_callback(data):
     edges = cv2.Canny(blur, canny_threshold_1, canny_threshold_2, apertureSize = 3)
     
     #Define Region of Interst
-    roi = region_of_interest(cv_image, np.array([roi_vertices], np.int32))
+    roi = region_of_interest(edges, np.array([roi_vertices], np.int32))
 
-    cv2.imshow("Image window blur", roi)
+    cv2.imshow("Image after blur, edges and roi", roi)
 
     cv2.waitKey(3)
     
