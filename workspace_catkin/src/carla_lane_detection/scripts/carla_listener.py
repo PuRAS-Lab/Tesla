@@ -50,8 +50,8 @@ camera_info_topic = '/carla/ego_vehicle/camera/rgb/front/camera_info'
 # Global Variables
 img_frame  = None
 header     = None
-img_height = None
-img_width  = None
+img_height = 0
+img_width  = 0
 bridge     = None
 
 # Image processing callback
@@ -85,7 +85,7 @@ def img_processing_callback(data):
     # Example of image processing!    
     #new_image = cv2.rotate(cv_image, cv2.ROTATE_90_CLOCKWISE)
     
-    roi = region_of_interest(cv_image,roi_vertices)
+    roi = region_of_interest(cv_image, np.array([roi_vertices], np.int32))
     cv2.imshow("Image window", roi)
     cv2.waitKey(3)
     
