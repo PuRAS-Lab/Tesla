@@ -47,8 +47,8 @@ camera_info_topic = '/carla/ego_vehicle/camera/rgb/front/camera_info'
 # Set in launch file:
 # image_topic       = '/carla/ego_vehicle/camera/rgb/front/image_color'
 
-canny_threshold_1 = 100
-canny_threshold_2 = 200
+# canny_threshold_1 = 100
+# canny_threshold_2 = 200
 
 # Global Variables
 img_frame  = None
@@ -57,7 +57,6 @@ img_height = 0
 img_width  = 0
 bridge     = None
 
-# Image processing callback
 
 def region_of_interest(img, vertices):
     mask = np.zeros_like(img)
@@ -65,7 +64,15 @@ def region_of_interest(img, vertices):
     cv2.fillPoly(mask, vertices, match_mask_color)
     masked_image = cv2.bitwise_and(img, mask)
     return masked_image
-        
+    
+
+# Check if Canny parameters are valid
+def check_canny_params(canny_param1, canny_param2):
+    if (canny_param1 > 0 and canny_param2 > 0) and (canny_param1 < canny_param2):
+    	return True
+    return False
+
+# Image processing callback      
 def img_processing_callback(data):
 
     # Need add ROS parameters
@@ -91,14 +98,21 @@ def img_processing_callback(data):
     
     # Remove white noise from image with low pass filter (Gaussian filter)
     blur = cv2.GaussianBlur(gray, (7, 7), 0)
-    
-    # Canny edge detector
-    edges = cv2.Canny(blur, canny_threshold_1, canny_threshold_2, apertureSize = 3)
-    
+
+    edges = None
+    if rospy.has_param('~canny_th_1') and rospy.has_param('~canny_th_2'):
+    	canny_threshold_1 = int(rospy.get_param('~canny_th_1'))
+    	canny_threshold_2 = int(rospy.get_param('~canny_th_2'))
+    	if check_canny_params(canny_threshold_1, canny_threshold_2):
+    		edges = cv2.Canny(blur, canny_threshold_1, canny_threshold_2, apertureSize = 3)
+            
     #Define Region of Interst
     roi = region_of_interest(edges, np.array([roi_vertices], np.int32))
-
-    cv2.imshow("Image after blur, edges and roi", roi)
+    
+    if edges is not None:	
+    	cv2.imshow("Image window blur", edges)
+    else:
+    	cv2.imshow("Image window blur", blur)
 
     cv2.waitKey(3)
     
