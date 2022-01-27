@@ -3,6 +3,8 @@
    
   <node pkg="carla_lane_detection" name="carla_listener" type="carla_listener.py">
   	<param name="camera_topic_name" value="/carla/ego_vehicle/camera/rgb/front/image_color"/>
+  	<param name="canny_th_1" value="100"/>
+  	<param name="canny_th_2" value="200"/>
   </node>
  
 </launch>
