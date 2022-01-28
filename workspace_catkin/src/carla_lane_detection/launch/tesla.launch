@@ -8,6 +8,9 @@
   	<param name="roi_x_min" value="0"/>
   	<param name="roi_x_max" value="800"/>
   	<param name="roi_y_max" value="200"/>
+  	<param name="hough_theta" value="1"/>
+  	<param name="hough_rho" value="1"/>
+  	<param name="hough_trshld" value="80"/>
   </node>
  
 </launch>
