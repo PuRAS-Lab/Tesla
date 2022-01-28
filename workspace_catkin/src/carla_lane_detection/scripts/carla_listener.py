@@ -63,7 +63,7 @@ bridge             = None
 #hough_trshld       = 80
 hough_min_line_len = 100
 hough_max_line_gap = 250
-
+pub                = None
 
 def region_of_interest(img, vertices):
     mask = np.zeros_like(img)
@@ -175,7 +175,10 @@ def img_processing_callback(data):
     
     line_image = calculate_hough(roi, cv_image)
     
-    cv2.imshow("Image window blur, edge, roi", line_image)
+    final_image = bridge.cv2_to_imgmsg(line_image)
+    pub.publish(final_image)
+    
+    #cv2.imshow("Image window blur, edge, roi", line_image)
 
     cv2.waitKey(3)
     
@@ -193,6 +196,9 @@ def carla_listener():
     # name for our 'carla_listener' node so that multiple listeners can
     # run simultaneously.
     rospy.init_node('carla_listener', anonymous=True)
+    
+    global pub
+    pub = rospy.Publisher('lane_detection', Image, queue_size=10)
 
     # Initialize the CvBridge class!
     global bridge
