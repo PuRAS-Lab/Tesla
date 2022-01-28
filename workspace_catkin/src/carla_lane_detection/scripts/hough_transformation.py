@@ -48,7 +48,7 @@ def extrapolate_two_lines(lines):
                         break
                 # Ako nije pronadjena druga linija, uzeti drugu po duzini iz liste
                 if len(two_lines) != 2:
-                    two_lines.append(lines[temp[2][5]])
+                    two_lines.append(lines[temp[1][5]])
 
     return two_lines
     
