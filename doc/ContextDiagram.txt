@@ -1,0 +1,18 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Context.puml
+
+title System Context diagram for CARLA and ROS
+
+Person(Customer, "Customer", "Start CARLA simulator, Start lunch file, Set Canny parameters, Set ROI parameters, Set Hough parameters")
+
+System(CARLA,"CARLA", "Send frames to ROS")
+
+System(ROS , "ROS", " Read customer parameters, Read frames from Carla, Convert to grayscale, Detect edges, Define ROI, Publish image with lines")
+
+Rel(Customer, CARLA, "Drive car")
+
+Rel_Neighbor(CARLA, ROS , "Send frames")
+Rel(Customer , ROS, "Set parameters") 
+@enduml
