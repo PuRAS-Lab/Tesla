@@ -28,3 +28,7 @@ catkin_install_python(PROGRAMS scripts/carla_listener.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
+catkin_install_python(PROGRAMS scripts/ros_listener.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
