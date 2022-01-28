@@ -73,7 +73,16 @@ def region_of_interest(img, vertices):
     return masked_image
     
 
-# Check if Canny parameters are valid
+
+
+# \brief Function for check if Canny parameters are valid
+#
+# \specifications
+# \spec [UDD_SPEC_1] If canny_param1 and canny_param1 are in range 0 and 255 and canny_param1 is less than canny_param2
+#                    function returns "True". (Decomposed From: SAD_SPEC_23, SAD_SPEC_24)
+# \spec [UDD_SPEC_2] If canny_param1 and canny_param1 are not in range 0 and 255 and canny_param1 is not less than canny_param2
+#                    function returns "False". (Decomposed From: SAD_SPEC_23, SAD_SPEC_24)
+# 
 def check_canny_params(canny_param1, canny_param2):
     if (canny_param1 > 0 and canny_param2 > 0) and (canny_param1 < canny_param2)  and (canny_param1 < 255 and canny_param2 < 255):
     	return True
