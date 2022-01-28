@@ -23,6 +23,7 @@ def extrapolate_two_lines(lines):
         pass
     elif lines.shape[0] == 1:
         two_lines.append(lines[0])
+        two_lines.append(lines[0])
     else:
         for i in range(lines.shape[0]):
             x1 = lines[i][0][0]

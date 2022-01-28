@@ -42,7 +42,7 @@ import numpy as np
 from std_msgs.msg import String
 from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge, CvBridgeError
-from hough_transformation import hough_transformation
+import hough_transformation
 
 # Parameters
 camera_info_topic = '/carla/ego_vehicle/camera/rgb/front/camera_info'
@@ -58,11 +58,11 @@ header             = None
 img_height         = 0
 img_width          = 0
 bridge             = None
-hough_rho          = 1
-hough_theta        = np.pi/180
-hough_trshld       = 80
-hough_min_line_len = 50
-hough_max_line_gap = 100
+#hough_rho          = 1
+#hough_theta        = np.pi/180
+#hough_trshld       = 80
+hough_min_line_len = 100
+hough_max_line_gap = 250
 
 
 def region_of_interest(img, vertices):
@@ -125,7 +125,31 @@ def calculate_roi(edges):
     		
     roi = region_of_interest(edges, np.array([roi_vertices], np.int32))
     return roi
+
+# Check if Hought parameters are valid
+def check_hough_params(rho, theta, thshld):
+    if (theta <= 0 or theta >= np.pi) and (thshld <= 0 or thshld >= 255) and (rho <= 0 or rho >= np.sqrt(img_width*img_width + img_height*img_height)):
+    	return True
+    return False 
     
+# Perform Hough transformation
+def calculate_hough(roi, cv_image):
+    hough_rho = 1
+    hough_theta = np.pi/180
+    hough_trshld = 80
+    
+    
+    if rospy.has_param('~hough_theta') and rospy.has_param('~hough_rho') and rospy.has_param('~hough_trshld'):
+        hough_rho = int(rospy.get_param('~hough_rho'))
+        hough_theta = int(rospy.get_param('~hough_theta')) * np.pi/180
+        hough_trshld = int(rospy.get_param('~hough_trshld'))
+        if not check_hough_params(hough_rho, hough_theta, hough_trshld):
+            hough_rho = 1
+            hough_theta = np.pi/180
+            hough_trshld = 80
+    	
+    lines = hough_transformation.hough_transformation(roi, cv_image, hough_rho, hough_theta, hough_trshld, hough_min_line_len, hough_max_line_gap)
+    return lines    
 
 # Image processing callback      
 def img_processing_callback(data):
@@ -149,7 +173,7 @@ def img_processing_callback(data):
     #Define Region of Interest
     roi = calculate_roi(edges)
     
-    line_image = hough_transformation(roi, cv_image, hough_rho, hough_theta, hough_trshld, hough_min_line_len, hough_max_line_gap)
+    line_image = calculate_hough(roi, cv_image)
     
     cv2.imshow("Image window blur, edge, roi", line_image)
 
